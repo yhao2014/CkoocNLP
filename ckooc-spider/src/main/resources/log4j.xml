@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE log4j:configuration SYSTEM "log4j.dtd">
+<log4j:configuration xmlns:log4j="http://jakarta.apache.org/log4j/"
+	debug="false">
+	<appender name="CONSOLE" class="org.apache.log4j.ConsoleAppender">
+		<layout class="org.apache.log4j.PatternLayout">
+			<param name="conversionPattern" value="%d %p [%c:%L] - %m%n" />
+		</layout>
+		<filter class="org.apache.log4j.varia.LevelRangeFilter">
+			<param name="LevelMin" value="DEBUG" />
+		</filter>
+	</appender>
+
+	<appender name="file" class="org.apache.log4j.RollingFileAppender">
+		<!-- <param name="File" value="G:/test/test.log" /> -->
+		<param name="MaxBackupIndex" value="20" />
+		<param name="MaxFileSize" value="20MB" />
+		<param name="Append" value="true" />
+		<layout class="org.apache.log4j.PatternLayout">
+			<param name="ConversionPattern" value="%d %p [%c:%L] - %m%n" />
+		</layout>
+	</appender>
+	<appender name="async_file" class="org.apache.log4j.AsyncAppender">
+		<param name="BufferSize" value="16384" />
+		<appender-ref ref="file" />
+	</appender>
+
+	<root>
+		<level value="info" />
+		<appender-ref ref="CONSOLE" />
+		<appender-ref ref="async_file" />
+	</root>
+</log4j:configuration>

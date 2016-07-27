@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <artifactId>CkoocNLP</artifactId>
+        <groupId>com.ickooc</groupId>
+        <version>1.0-SNAPSHOT</version>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+
+    <artifactId>ckooc-ml</artifactId>
+
+    <!-- 增加ansj的maven源 -->
+    <repositories>
+        <repository>
+            <id>mvn-repo</id>
+            <url>http://maven.nlpcn.org/</url>
+        </repository>
+    </repositories>
+
+    <properties>
+        <hanlp.version>portable-1.2.10</hanlp.version>
+        <ansj.version>5.0.0</ansj.version>
+
+        <scala.binary.version>2.10</scala.binary.version>
+        <spark.version>1.6.1</spark.version>
+        <scopt.version>3.3.0</scopt.version>
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>com.hankcs</groupId>
+            <artifactId>hanlp</artifactId>
+            <version>${hanlp.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.ansj</groupId>
+            <artifactId>ansj_seg</artifactId>
+            <version>${ansj.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.spark</groupId>
+            <artifactId>spark-core_${scala.binary.version}</artifactId>
+            <version>${spark.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.spark</groupId>
+            <artifactId>spark-mllib_${scala.binary.version}</artifactId>
+            <version>${spark.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.github.scopt</groupId>
+            <artifactId>scopt_${scala.binary.version}</artifactId>
+            <version>${scopt.version}</version>
+        </dependency>
+    </dependencies>
+</project>

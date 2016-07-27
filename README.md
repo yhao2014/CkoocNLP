@@ -90,7 +90,7 @@ WebMagic由以下四个模块组成：<br>
 ## 分类
 目前主要使用分类算法进行新闻分类，已实现的算法有：
 >
-* [LR逻辑回归](https://github.com/yhao2014/CkoocNLP/blob/master/ckooc-ml/src/main/scala/ml/classification/LRCliassifyUtils.scala)
+* [LR逻辑回归](https://github.com/yhao2014/CkoocNLP/tree/master/ckooc-ml/src/main/scala/ml/classification/LRClassifyUtils.scala)
 
 
 

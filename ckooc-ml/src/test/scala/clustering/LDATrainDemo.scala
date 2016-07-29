@@ -40,7 +40,7 @@ object LDATrainDemo {
     //-- LDA训练
     val k = 10 //主题个数
     val analysisType = "em" //参数估计算法
-    val maxIterations = 20 //迭代次数
+    val maxIterations = 20 //训练迭代次数
 
     val ldaUtils = new LDAUtils()
       .setK(k)

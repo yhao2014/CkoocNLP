@@ -46,7 +46,7 @@ WebMagic由以下四个模块组成：<br>
 
 
 ## 数据预处理
-[数据预处理](https://github.com/yhao2014/CkoocNLP/blob/master/ckooc-ml/src/main/scala/nlp/preprocess/PreProcessUtils.scala)主要对算法需要用到的数据进行前期的清洗等操作，其中分词等使用到了[Ansj](https://github.com/ansjsun/ansj_seg)和[HanLP](https://github.com/hankcs/HanLP)相关的代码。
+[数据预处理](https://github.com/yhao2014/CkoocNLP/blob/master/ckooc-ml/src/main/scala/nlp/preprocess/nlp.PreProcessUtils.scala)主要对算法需要用到的数据进行前期的清洗等操作，其中分词等使用到了[Ansj](https://github.com/ansjsun/ansj_seg)和[HanLP](https://github.com/hankcs/HanLP)相关的代码。
 
 **由于分词使用到的词典和模型较大，因此未上传到github上，请从网盘下载：**<br>
 链接：[http://pan.baidu.com/s/1qYpeaza](http://pan.baidu.com/s/1qYpeaza) 密码：kox1 大小：638MB<br>
@@ -123,3 +123,15 @@ WebMagic由以下四个模块组成：<br>
     新闻分类数据         571M            16               10000                     5000                LR             8000     0.8016991074309066
     新闻分类(chinaNews)  683M            2              140000+                   60000+                LR            15000     0.9565125193703613
     新闻分类(chinaNews) 1.98G            6              160000+                   70000+                LR            50000     0.8599223781293982
+
+### SVM分类(二分类)测试记录
+       数据类型        数据大小        分类数        训练文本数/per分类        测试文本数/per分类        分类算法        特征维数         Area under ROC
+    新闻分类(chinaNews)  683M            2              140000+                   60000+               SVM            15000        0.9649445556688644
+    新闻分类(chinaNews)  587M            2              140000+                   60000+               SVM            15000        0.9421810171886563
+
+
+**说明**
+>
+* 2分类：国内新闻、国外新闻(683M)/文化、娱乐(587M)
+* 6分类：经济、军事、社会、体育、文化、娱乐
+* 13分类：公益、健康、交通、教育、经济、军事、历史、农业、时尚、数码、体育、通讯、娱乐

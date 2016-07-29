@@ -2,14 +2,11 @@ package ml.clustering.lda
 
 import java.io.File
 
-import ml.feature.Vectorizer
-import nlp.preprocess.PreProcessUtils
-import org.apache.log4j.{Level, Logger}
 import org.apache.spark.ml.feature.CountVectorizerModel
 import org.apache.spark.mllib.clustering._
 import org.apache.spark.mllib.linalg.Vector
 import org.apache.spark.rdd.RDD
-import org.apache.spark.{Logging, SparkConf, SparkContext}
+import org.apache.spark.{Logging, SparkContext}
 
 
 /**
@@ -141,8 +138,8 @@ class LDAUtils(
   /**
     * 打印模型训练相关信息
     *
-    * @param ldaModel         LDAModel
-    * @param trainElapsed     训练耗时
+    * @param ldaModel     LDAModel
+    * @param trainElapsed 训练耗时
     */
   def trainInfo(data: RDD[(Long, Vector)], ldaModel: LDAModel, trainElapsed: Double) = {
     println("完成LDA模型训练！")

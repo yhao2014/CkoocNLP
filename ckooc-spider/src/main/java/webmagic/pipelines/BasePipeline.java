@@ -26,12 +26,19 @@ public class BasePipeline implements Pipeline {
         this.path = path;
     }
 
+    Long count = 0L;
+
     @Override
     public void process(ResultItems resultItems, Task task) {
         String reg = "\u00ef";
 
+        if (count % 100000 == 0) {
+            count += 1;
+        }
+        String path_new = path.substring(0, path.lastIndexOf(".")) + "_" + count + path.substring(path.lastIndexOf(".") + 1, path.length());
+
         try {
-            PrintWriter printWriter = new PrintWriter(new OutputStreamWriter(new FileOutputStream(path, true),"UTF-8"));
+            PrintWriter printWriter = new PrintWriter(new OutputStreamWriter(new FileOutputStream(path_new, true),"UTF-8"));
             for (Map.Entry<String, Object> entry : resultItems.getAll().entrySet()) {
                 if (entry.getValue() instanceof Iterable) {
                     if (Objects.equals(entry.getKey(), "content")) {

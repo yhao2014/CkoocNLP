@@ -1,11 +1,11 @@
-package nlp.preprocess
+package nlp.segment
 
 import java.io._
 import java.util
 import java.util.Properties
 
 import com.hankcs.hanlp.HanLP
-import nlp.preprocess.chinese.ZHConverter
+import nlp.segment.chinese.ZHConverter
 import org.ansj.domain.Term
 import org.ansj.recognition.impl.FilterRecognition
 import org.ansj.splitWord.analysis._
@@ -23,7 +23,7 @@ import scala.collection.mutable.ArrayBuffer
   * <p>&nbsp &nbsp &nbsp &nbsp基本清洗（繁简转换、全半角转换、去除无意义词）、分词、分句、分段、去除停用词、去除低频词</p>
   * <p>Created by yhao on 2016/3/12.</p>
   */
-class PreProcessUtils(config: PreProcessConfig) extends Logging with Serializable {
+class SegmentUtils(config: SegmentConfig) extends Logging with Serializable {
 
   private val enExpr = "[A-Za-z]+".r
   //英文字符正则
@@ -76,7 +76,8 @@ class PreProcessUtils(config: PreProcessConfig) extends Logging with Serializabl
 
 
   /**
-    *简体转繁体，使用hanlp工具包方法实现
+    * 简体转繁体，使用hanlp工具包方法实现
+    *
     * @param line 输入数据
     * @return 转换为繁体的数据
     */
@@ -223,7 +224,7 @@ class PreProcessUtils(config: PreProcessConfig) extends Logging with Serializabl
   /**
     * 获取低频词
     *
-    * @param wordRDD     词序列
+    * @param wordRDD 词序列
     * @return 低频词数组
     */
   def getRareTerms(wordRDD: RDD[(Long, scala.Seq[String])]): Array[String] = {
@@ -301,7 +302,7 @@ class PreProcessUtils(config: PreProcessConfig) extends Logging with Serializabl
     }
 
     //根据词长度过滤
-    resultRDD = resultRDD.map{case (id: Long, values: Seq[String]) =>
+    resultRDD = resultRDD.map { case (id: Long, values: Seq[String]) =>
       (id, values.filter(_.length >= config.minTermSize))
     }
 
@@ -309,23 +310,23 @@ class PreProcessUtils(config: PreProcessConfig) extends Logging with Serializabl
   }
 }
 
-object PreProcessUtils extends Logging {
+object SegmentUtils extends Logging {
 
-  def apply(): PreProcessUtils = {
-    PreProcessUtils("config/preprocess.properties")
+  def apply(): SegmentUtils = {
+    SegmentUtils("config/segment.properties")
   }
 
-  def apply(confFile: String): PreProcessUtils = {
-    val config = PreProcessConfig(confFile)
-    new PreProcessUtils(config)
+  def apply(confFile: String): SegmentUtils = {
+    val config = SegmentConfig(confFile)
+    new SegmentUtils(config)
   }
 
-  def apply(prop: Properties): PreProcessUtils = {
-    val config = PreProcessConfig(prop)
-    new PreProcessUtils(config)
+  def apply(prop: Properties): SegmentUtils = {
+    val config = SegmentConfig(prop)
+    new SegmentUtils(config)
   }
 
-  def apply(conf: PreProcessConfig): PreProcessUtils = {
-    new PreProcessUtils(conf)
+  def apply(conf: SegmentConfig): SegmentUtils = {
+    new SegmentUtils(conf)
   }
 }

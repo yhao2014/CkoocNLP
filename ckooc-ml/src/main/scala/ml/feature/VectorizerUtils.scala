@@ -2,25 +2,22 @@ package ml.feature
 
 import java.io._
 
-import nlp.preprocess.PreProcessUtils
-import org.apache.log4j.{Level, Logger}
 import org.apache.spark.ml.feature.{CountVectorizer, CountVectorizerModel}
 import org.apache.spark.mllib.linalg.{Vector, Vectors}
 import org.apache.spark.mllib.regression.LabeledPoint
 import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.{DataFrame, Row, SQLContext}
-import org.apache.spark.{SparkConf, SparkContext}
 
 import scala.reflect.io.File
 
 /**
   * Created by Administrator on 2016/7/25.
   */
-class Vectorizer(
-                  private var minDocFreq: Int,
-                  private var vocabSize: Int,
-                  private var toTFIDF: Boolean
-                )extends Serializable {
+class VectorizerUtils(
+                       private var minDocFreq: Int,
+                       private var vocabSize: Int,
+                       private var toTFIDF: Boolean
+                     ) extends Serializable {
 
   def this() = this(minDocFreq = 1, vocabSize = 5000, toTFIDF = true)
 
@@ -42,7 +39,9 @@ class Vectorizer(
   }
 
   def getMinDocFreq: Int = this.minDocFreq
+
   def getVocabSize: Int = this.vocabSize
+
   def getToTFIDF: Boolean = this.toTFIDF
 
 
@@ -83,7 +82,7 @@ class Vectorizer(
   /**
     * 根据特征向量生成tf-idf模型
     *
-    * @param documents  文档LabeledPoint
+    * @param documents 文档LabeledPoint
     * @return IDFModel
     */
   def genIDFModel(documents: RDD[LabeledPoint]): IDFModel = {
@@ -97,8 +96,8 @@ class Vectorizer(
   /**
     * 将词频LabeledPoint转化为TF-IDF的LabeledPoint
     *
-    * @param documents  词频LabeledPoint
-    * @param idfModel TF-IDF模型
+    * @param documents 词频LabeledPoint
+    * @param idfModel  TF-IDF模型
     * @return TF-IDF的LabeledPoint
     */
   def toTFIDFLP(documents: RDD[LabeledPoint], idfModel: IDFModel): RDD[LabeledPoint] = {
@@ -107,7 +106,7 @@ class Vectorizer(
 
     val tfidf = idfModel.transform(allFeatures)
 
-    val tfidfDocs = ids.zip(tfidf).map{case (id, features) => LabeledPoint(id, features)}
+    val tfidfDocs = ids.zip(tfidf).map { case (id, features) => LabeledPoint(id, features) }
 
     tfidfDocs
   }
@@ -175,11 +174,12 @@ class Vectorizer(
 
   /**
     * 保存cvModel向量模型和idf向量
-    * @param modelPath  保存路径
-    * @param cvModel  cvModel
-    * @param idf  idf向量
+    *
+    * @param modelPath 保存路径
+    * @param cvModel   cvModel
+    * @param idf       idf向量
     */
-  def save(modelPath: String, cvModel: CountVectorizerModel, idf: Vector): Unit ={
+  def save(modelPath: String, cvModel: CountVectorizerModel, idf: Vector): Unit = {
     val bw = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(modelPath + File.separator + "IDF")))
     bw.write(idf.toArray.mkString(","))
     cvModel.save(modelPath + File.separator + "cvModel")
@@ -190,7 +190,8 @@ class Vectorizer(
 
   /**
     * 加载cvModel向量模型和idf向量
-    * @param modelPath  模型保存路径
+    *
+    * @param modelPath 模型保存路径
     * @return (cvModel, idf)
     */
   def load(modelPath: String): (CountVectorizerModel, Vector) = {

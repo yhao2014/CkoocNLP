@@ -1,8 +1,9 @@
 package clustering
 
 import ml.clustering.lda.LDAUtils
-import ml.feature.Vectorizer
-import nlp.preprocess.PreProcessUtils
+import ml.feature.VectorizerUtils
+import nlp.PreProcessUtils
+import nlp.segment.SegmentUtils
 import org.apache.log4j.{Level, Logger}
 import org.apache.spark.mllib.clustering.LDAModel
 import org.apache.spark.{SparkConf, SparkContext}
@@ -23,34 +24,23 @@ object LDATrainDemo {
     val vecModelPath = args(1)
     val ldaModelPath = args(2)
 
+    val blockSize = 48
+    val minDocSize = 2
+    val vocabSize = 5000
+    val toTFIDF = true
 
-    //--- 分词
-    val preUtils = PreProcessUtils("ckooc-ml/src/main/resources/preprocess.properties")
-    val splitSize = 48    //数据切分大小（MB）
-    val trainData = preUtils.getText(sc, dataPath, splitSize).zipWithIndex().map(_.swap)
-    val splitedRDD = preUtils.run(trainData)
-
-
-    //--- 向量化
-    val minDocFreq = 2    //最小文档频率阀值
-    val toTFIDF = true    //是否将TF转化为TF-IDF
-    val vocabSize = 5000    //词汇表大小
-
-    val vectorizer = new Vectorizer()
-      .setMinDocFreq(minDocFreq)
-      .setToTFIDF(toTFIDF)
+    val preUtils = new PreProcessUtils()
+      .setBlockSize(blockSize)
+      .setMinDocFreq(minDocSize)
       .setVocabSize(vocabSize)
+      .setToTFIDF(toTFIDF)
 
-    val (vectorizedRDD, cvModel, idf) = vectorizer.vectorize(splitedRDD)
-    vectorizer.save(vecModelPath, cvModel, idf)
-
-    val trainRDD = vectorizedRDD.map(line => (line.label.toLong, line.features))
-
+    val trainRDD = preUtils.run(sc, dataPath, vecModelPath, "train")._1
 
     //-- LDA训练
-    val k = 10    //主题个数
-    val analysisType = "em"   //参数估计算法
-    val maxIterations = 20    //迭代次数
+    val k = 10 //主题个数
+    val analysisType = "em" //参数估计算法
+    val maxIterations = 20 //迭代次数
 
     val ldaUtils = new LDAUtils()
       .setK(k)

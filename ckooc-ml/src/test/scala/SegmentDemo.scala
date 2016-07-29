@@ -1,23 +1,23 @@
 import java.io.{BufferedWriter, File, FileOutputStream, OutputStreamWriter}
 
-import nlp.preprocess.PreProcessUtils
+import nlp.segment.SegmentUtils
 import org.apache.log4j.{Level, Logger}
 import org.apache.spark.{SparkConf, SparkContext}
 
 /**
   * Created by Administrator on 2016/7/25.
   */
-object PreProcessDemo {
+object SegmentDemo {
   def main(args: Array[String]) {
     Logger.getRootLogger.setLevel(Level.WARN)
 
     val conf = new SparkConf().setAppName("PreProcess").setMaster("local[4]")
     val sc = new SparkContext(conf)
 
-    val preUtils = PreProcessUtils("ckooc-ml/src/main/resources/preprocess.properties")
+    val preUtils = SegmentUtils("ckooc-ml/src/main/resources/segment.properties")
 
     val args = Array("ckooc-ml/data/news/train", "ckooc-ml/data/preprocess/train")
-//    val args = Array("ckooc-ml/data/news/test", "ckooc-ml/data/preprocess/test")
+    //    val args = Array("ckooc-ml/data/news/test", "ckooc-ml/data/preprocess/test")
 
     val inPath = args(0)
     val outPath = args(1)

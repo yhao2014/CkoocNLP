@@ -1,23 +1,19 @@
 package ml.classification
 
-import java.io._
+import java.io.{FileInputStream, InputStreamReader, _}
 
-import org.apache.log4j.{Level, Logger}
-import org.apache.spark.ml.feature.CountVectorizerModel
-import org.apache.spark.mllib.classification.{LogisticRegressionModel, LogisticRegressionWithLBFGS}
-import org.apache.spark.mllib.evaluation.MulticlassMetrics
-import org.apache.spark.mllib.feature.IDFModel
+import org.apache.spark.SparkContext
+import org.apache.spark.mllib.classification.{LogisticRegressionModel, LogisticRegressionWithLBFGS, SVMModel, SVMWithSGD}
+import org.apache.spark.mllib.evaluation.{BinaryClassificationMetrics, MulticlassMetrics}
 import org.apache.spark.mllib.regression.LabeledPoint
 import org.apache.spark.rdd.RDD
-import org.apache.spark.{SparkConf, SparkContext}
 
 import scala.collection.mutable
 
 /**
-  * Created by Administrator on 2016/6/17.
+  * Created by Administrator on 2016/7/28.
   */
-class LRClassifyUtils(val classNums: Int) extends Serializable {
-
+class SVMClassifyUtils extends Serializable {
   /**
     * 从目录获取带分类数据，目录下每个文件名即为对应分类
     *
@@ -87,13 +83,10 @@ class LRClassifyUtils(val classNums: Int) extends Serializable {
     * @param tokensLP LabeledPoint数据
     * @return LRModel
     */
-  def train(tokensLP: RDD[LabeledPoint]): LogisticRegressionModel = {
+  def train(tokensLP: RDD[LabeledPoint], numIterations: Int): SVMModel = {
     tokensLP.persist()
-
     //训练
-    val model = new LogisticRegressionWithLBFGS()
-      .setNumClasses(classNums)
-      .run(tokensLP)
+    val model = SVMWithSGD.train(tokensLP, numIterations)
     tokensLP.unpersist()
 
     model
@@ -106,7 +99,7 @@ class LRClassifyUtils(val classNums: Int) extends Serializable {
     * @param tokensLP LabeledPoint数据
     * @param model  LRModel
     */
-  def test(tokensLP: RDD[LabeledPoint], model: LogisticRegressionModel) = {
+  def test(tokensLP: RDD[LabeledPoint], model: SVMModel) = {
     tokensLP.persist()
 
     //预测，返回预测标签和原有标签
@@ -116,13 +109,11 @@ class LRClassifyUtils(val classNums: Int) extends Serializable {
     }
     tokensLP.unpersist()
 
-    val metrics = new MulticlassMetrics(predictionAndLabels)
-    for (i <- Range(0, classNums)) {
-      println(metrics.precision(i))
-    }
+    val metrics = new BinaryClassificationMetrics(predictionAndLabels)
 
-    val precision = metrics.precision
-    println("准确度 = " + precision)
+    val auROC = metrics.areaUnderROC()
+
+    println("Area under ROC = " + auROC)
   }
 
 
@@ -133,7 +124,7 @@ class LRClassifyUtils(val classNums: Int) extends Serializable {
     * @param model  LRModel
     * @return 预测类别ID
     */
-  def predict(tokensLP: RDD[LabeledPoint], model: LogisticRegressionModel): Double = {
+  def predict(tokensLP: RDD[LabeledPoint], model: SVMModel): Double = {
     val predictionAndLabels = tokensLP.map { case LabeledPoint(label, features) =>
       val prediction = model.predict(features)
       (prediction, label)
@@ -152,7 +143,7 @@ class LRClassifyUtils(val classNums: Int) extends Serializable {
     */
   def save(
             sc: SparkContext,
-            model: LogisticRegressionModel,
+            model: SVMModel,
             categoryMap: mutable.HashMap[Long, String],
             modelPath: String): Unit = {
 
@@ -172,9 +163,9 @@ class LRClassifyUtils(val classNums: Int) extends Serializable {
     */
   def load(
             sc: SparkContext,
-            modelPath: String): (LogisticRegressionModel, mutable.HashMap[Long, String]) = {
+            modelPath: String): (SVMModel, mutable.HashMap[Long, String]) = {
 
-    val model = LogisticRegressionModel.load(sc, modelPath + File.separator + "model")
+    val model = SVMModel.load(sc, modelPath + File.separator + "model")
 
     val br = new BufferedReader(new InputStreamReader(new FileInputStream(modelPath + File.separator + "categoryMap")))
     val categoryMap = new mutable.HashMap[Long, String]()

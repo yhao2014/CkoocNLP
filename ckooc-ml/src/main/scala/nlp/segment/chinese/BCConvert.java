@@ -1,4 +1,4 @@
-package nlp.preprocess.chinese;
+package nlp.segment.chinese;
 
 import org.apache.commons.lang3.StringUtils;
 

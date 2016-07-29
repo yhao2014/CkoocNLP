@@ -1,8 +1,8 @@
 package classification
 
 import ml.classification.LRClassifyUtils
-import ml.feature.Vectorizer
-import nlp.preprocess.PreProcessUtils
+import ml.feature.VectorizerUtils
+import nlp.segment.SegmentUtils
 import org.apache.log4j.{Level, Logger}
 import org.apache.spark.{SparkConf, SparkContext}
 
@@ -26,7 +26,7 @@ object LRClassifyPredictDemo {
 
 
     //--- 分词
-    val preUtils = PreProcessUtils("ckooc-ml/src/main/resources/preprocess.properties")
+    val preUtils = SegmentUtils("ckooc-ml/src/main/resources/segment.properties")
     val lrUtils = new LRClassifyUtils(classNum)
 
     val textRDD = sc.parallelize(Seq(data)).map(line => (-1L, line))
@@ -34,11 +34,11 @@ object LRClassifyPredictDemo {
 
 
     //--- 向量化
-    val minDocFreq = 2    //最小文档频率阀值
-    val toTFIDF = true    //是否将TF转化为TF-IDF
-    val vocabSize = 5000    //词汇表大小
+    val minDocFreq = 2 //最小文档频率阀值
+    val toTFIDF = true //是否将TF转化为TF-IDF
+    val vocabSize = 5000 //词汇表大小
 
-    val vectorizer = new Vectorizer()
+    val vectorizer = new VectorizerUtils()
       .setMinDocFreq(minDocFreq)
       .setToTFIDF(toTFIDF)
       .setVocabSize(vocabSize)

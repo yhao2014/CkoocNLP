@@ -1,4 +1,4 @@
-package nlp.preprocess.chinese;
+package nlp.segment.chinese;
 
 import java.io.*;
 import java.util.*;

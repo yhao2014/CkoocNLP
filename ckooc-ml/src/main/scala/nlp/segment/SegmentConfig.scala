@@ -1,4 +1,4 @@
-package nlp.preprocess
+package nlp.segment
 
 import java.io.{BufferedReader, FileInputStream, InputStreamReader}
 import java.util.Properties
@@ -10,12 +10,12 @@ import org.apache.spark.Logging
 /**
  * NLP数据预处理配置类
  */
-case class PreProcessConfig(f2j: Boolean, q2b: Boolean, delNum: Boolean, numToChar: String, delEn: Boolean,
+case class SegmentConfig(f2j: Boolean, q2b: Boolean, delNum: Boolean, numToChar: String, delEn: Boolean,
                             delStopword: Boolean, splitWord: Boolean, splitTool: String, splitType: String, addNature: Boolean, oneGram: Boolean,
                             minTermSize: Int, minTermNum: Int, delRareTerm: Boolean, rareTermNum: Int,
                             toParagraphs: Boolean, paragraphSeparator: String, stopwordPath: String)
 
-object PreProcessConfig extends Logging {
+object SegmentConfig extends Logging {
 
   /**
     * 参数列表
@@ -30,7 +30,7 @@ object PreProcessConfig extends Logging {
     * @param prop 参数配置
     * @return Config
     */
-  def apply(prop: Properties): PreProcessConfig = {
+  def apply(prop: Properties): SegmentConfig = {
     checkParams(prop)
     printParams(prop)
     val f2j = BooleanUtils.toBoolean(if (prop.getProperty("f2j") == null) "true" else prop.getProperty("f2j"))
@@ -51,7 +51,7 @@ object PreProcessConfig extends Logging {
     val toParagraphs = BooleanUtils.toBoolean(if (prop.getProperty("toParagraphs") == null) "false" else prop.getProperty("toParagraphs"))
     val paragraphSeparator = if (prop.getProperty("paragraphSeparator") == null) "		" else prop.getProperty("paragraphSeparator").replaceAll("<|>", "")
     val stopwordPath = prop.getProperty("stopwordPath", "")
-    new PreProcessConfig(f2j, q2b, delNum, numToChar, delEn, delStopword, splitWord, splitTool, splitType, addNature, oneGram, minTermSize, minTermNum, delRareTerm, rareTermNum, toParagraphs, paragraphSeparator, stopwordPath)
+    new SegmentConfig(f2j, q2b, delNum, numToChar, delEn, delStopword, splitWord, splitTool, splitType, addNature, oneGram, minTermSize, minTermNum, delRareTerm, rareTermNum, toParagraphs, paragraphSeparator, stopwordPath)
   }
 
   /**
@@ -60,14 +60,14 @@ object PreProcessConfig extends Logging {
     * @param propFile 配置文件路径
     * @return Config
     */
-  def apply(propFile: String): PreProcessConfig = {
+  def apply(propFile: String): SegmentConfig = {
     val prop = new Properties
     try {
       prop.load(new BufferedReader(new InputStreamReader(new FileInputStream(propFile), "UTF-8")))
     } catch {
       case e: Exception => e.printStackTrace()
     }
-    PreProcessConfig(prop)
+    SegmentConfig(prop)
   }
 
   /**
@@ -76,7 +76,7 @@ object PreProcessConfig extends Logging {
     * @param kvs  key=value数组
     * @return Config
     */
-  def apply(kvs: Array[String]): PreProcessConfig = {
+  def apply(kvs: Array[String]): SegmentConfig = {
     val prop = new Properties
     kvs.foreach { kv =>
       {
@@ -86,7 +86,7 @@ object PreProcessConfig extends Logging {
         prop.setProperty(key, value)
       }
     }
-    PreProcessConfig(prop)
+    SegmentConfig(prop)
   }
 
   /**

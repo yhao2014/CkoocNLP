@@ -1,7 +1,7 @@
 package feature
 
-import ml.feature.Vectorizer
-import nlp.preprocess.PreProcessUtils
+import ml.feature.VectorizerUtils
+import nlp.segment.SegmentUtils
 import org.apache.log4j.{Level, Logger}
 import org.apache.spark.{SparkConf, SparkContext}
 
@@ -21,14 +21,14 @@ object VectorizeDemo {
     val outPath = args(1)
     val splitSize = 48
 
-    val preUtils = PreProcessUtils("ckooc-ml/src/main/resources/preprocess.properties")
+    val preUtils = SegmentUtils("ckooc-ml/src/main/resources/segment.properties")
 
-    val vectorizer = new Vectorizer()
+    val vectorizer = new VectorizerUtils()
       .setMinDocFreq(2)
       .setToTFIDF(true)
       .setVocabSize(5000)
 
-    val data = preUtils.getText(sc, inPath, splitSize).map{line =>
+    val data = preUtils.getText(sc, inPath, splitSize).map { line =>
       val tokens = line.split("|")
       val id = tokens(0).toLong
       val values = tokens(1).split("\\s+")

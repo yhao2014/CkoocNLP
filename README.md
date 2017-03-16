@@ -31,70 +31,73 @@ WebMagic由以下四个模块组成：<br>
 >
 * [BasePipline](https://github.com/yhao2014/CkoocNLP/blob/master/ckooc-spider/src/main/java/webmagic/piplines/BasePipline.java)
 
-如有需要的同学可以参考给出的代码自行实现特定网站的爬取和结果存储
+如有需要的同学可以参考给出的代码自行实现特定网站的爬取和结果存储.
 
 ---
 #ckooc-ml
-本模块主要是基于spark的机器学习算法应用实践。<br>
+本模块主要是一些算法实现以及基于spark的机器学习算法应用实践。<br>
 
-目前实现了以下案例：
+目前实现的算法：
 >
 * 数据预处理与分词过滤
-* 基于LR的新闻分类
 
+<br>
 
-## 数据预处理
-[数据预处理](https://github.com/yhao2014/CkoocNLP/blob/master/ckooc-ml/src/main/scala/nlp/preprocess/nlp.PreProcessUtils.scala)主要对算法需要用到的数据进行前期的清洗等操作，其中分词等使用到了[HanLP](https://github.com/hankcs/HanLP)相关的代码。
-
-**由于分词使用到的词典和模型较大，因此未上传到github上，请直接从[HanLP发布页](https://github.com/hankcs/HanLP/releases)下载对应版本的data包，版本可在pom.xml文件查看**<br>
-*下载完后解压到ckooc-ml/dictionaries目录下即可*
-
-主要有以下功能：
+目前实现的案例：
 >
-* 繁简转换
-* 全半角转换
-* 分词
-* 去除停用词
-* 按词长度过滤
-* 按词数量过滤行
+* 基于LR的新闻分类
+* 基于DT的新闻分类
 
-### 输入数据格式
+
+## 数据说明
 数据预处理的输入数据为[中国新闻网](http://www.chinanews.com/)上抓取的数据,分为6个类别`体育`,`军事`,`娱乐`,`文化`,`社会`和`经济`. 分为训练文本和测试文本.
 
 输入文件位置：
-* 训练文本: ckooc-ml/data/news/train/
-* 测试文本: ckooc-ml/data/news/test/
+* 训练文本: ckooc-ml/data/chinanews/train/
+* 测试文本: ckooc-ml/data/chinanews/test/
 
-### 输出数据格式
-输出经过分词等预处理之后的数据<br>
+数据格式：<br>
+每行一条新闻数据，保留4个字段：`类别` `标题` `日期` `正文`. 不同字段之间使用分割符`ï`(unicode编码为`\u00EF`)
 
-输出文件位置：
-* 训练文本: ckooc-ml/data/preprocess/train
-* 测试文本: ckooc-ml/data/preprocess/test
+##算法
 
-
-## spark-LDA
-这是一个基于[spark](http://spark.apache.org/)的常规定义的
-[LDA](https://en.wikipedia.org/wiki/Latent_Dirichlet_allocation)的Scala代码实现.
-本代码根据spark官网提供的
-[LDAExample.scala](https://github.com/apache/spark/blob/master/examples/src/main/scala/org/apache/spark/examples/mllib/LDAExample.scala)
-文件进行代码改进，实现了LDA的模型训练和保存、加载模型并进行预测功能。
-下面是一些具体的说明。
-
-[LDA实现代码](https://github.com/yhao2014/CkoocNLP/blob/master/ckooc-ml/src/main/scala/ml/clustering/lda/LDAUtils.scala)
-
-
-## 分类
-目前主要使用分类算法进行新闻分类，已实现的算法有：
+### 1. 数据预处理
+数据预处理主要分成了两步：
 >
-* [LR逻辑回归](https://github.com/yhao2014/CkoocNLP/tree/master/ckooc-ml/src/main/scala/ml/classification/LRClassifyUtils.scala)
+* [数据清洗](https://github.com/yhao2014/CkoocNLP/blob/master/ckooc-ml/src/main/scala/algorithms/nlp/clean/Cleaner.scala)
+* [分词过滤](https://github.com/yhao2014/CkoocNLP/blob/master/ckooc-ml/src/main/scala/algorithms/nlp/segment/Segmenter.scala)
+
+数据清洗目前实现的功能有`繁简转换` `全半角转换` `按长度过滤行`. 如果特殊处理，可以对该部分代码自行修改！<br>
+分词过滤目前实现的功能有`分词` `词性标注` `过滤英文` `过滤数字` `按词长度过滤` `按词性过滤` `按词数量过滤行`. 使用到了[HanLP](https://github.com/hankcs/HanLP)相关的代码。
+由于分词使用到的词典和模型较大，因此未上传到github上，请直接从[HanLP发布页](https://github.com/hankcs/HanLP/releases)下载对应版本的data包，
+版本可在pom.xml文件查看.<br>
+*下载完后解压到ckooc-ml/dictionaries目录下即可*
 
 
+## 案例
 
-**上述所有功能的Demo均在[ckooc-ml/src/test/scala](https://github.com/yhao2014/CkoocNLP/blob/master/ckooc-ml/src/test/scala)目录下**
+### 1. 基于LR的新闻分类
+基于LR的新闻分类采用了spark ML包提供的LogisticRegression方法，经过预处理步骤后进行6个类别的新闻分类.
+>
+* 训练代码: [TrainNewsClassWithLRDemo](https://github.com/yhao2014/CkoocNLP/blob/master/ckooc-ml/src/main/scala/applications/ml/TrainNewsClassWithLRDemo.scala)
+* 预测代码: [PredictNewsClassDemo](https://github.com/yhao2014/CkoocNLP/blob/master/ckooc-ml/src/main/scala/applications/ml/PredictNewsClassDemo.scala)
+
+### 2. 基于DT的新闻分类
+基于LR的新闻分类采用了spark ML包提供的DecisionTreeClassifier方法，经过预处理步骤后进行6个类别的新闻分类.
+>
+* 训练代码: [TrainNewsClassWithDTDemo](https://github.com/yhao2014/CkoocNLP/blob/master/ckooc-ml/src/main/scala/applications/ml/TrainNewsClassWithDTDemo.scala)
+* 预测代码: [PredictNewsClassDemo](https://github.com/yhao2014/CkoocNLP/blob/master/ckooc-ml/src/main/scala/applications/ml/PredictNewsClassDemo.scala)
+
+
 
 ---
 # 各种测试记录
+## 分类测试记录
+       分类算法        数据类型        数据大小        分类数        训练文本数/per分类        测试文本数/per分类        特征维数        特征选择         准确率                    召回率                    F1值                  
+        LR        新闻分类数据        34.6M            6                1300                       700              10000      tf-idf        0.8935800599954036       0.8914027149321267       0.891430851616871 
+        LR        新闻分类数据        34.6M            6                1300                       700              15000      tf-idf        0.8947117208305829       0.8928316265777566       0.8928794316892751 
+
+
 ## LDA模型训练性能记录
 
         数据           CPU           内存           数据           语料大小           文本特点           文本个数           迭代次数          主题数          训练时长          avglogLikelihood          logPerplexity
@@ -109,22 +112,6 @@ WebMagic由以下四个模块组成：<br>
 
     5cores * 12   30g * 12       百度百科          428M             长文本            100000              40              1000            2.82h
 
-
-## 分类记录
-### LR分类测试记录
-       数据类型        数据大小        分类数        训练文本数/per分类        测试文本数/per分类        分类算法        特征维数         准确度
-    新闻分类数据         457M            13               10000                     5000                LR             7000     0.817751203603044
-    新闻分类数据         457M            13               10000                     5000                LR             8000     0.8633949371020345
-    新闻分类数据         457M            13               10000                     5000                LR            10000     0.8678832116788321
-    新闻分类数据         516M            15               10000                     5000                LR             8000     0.7378484249241117
-    新闻分类数据         571M            16               10000                     5000                LR             8000     0.8016991074309066
-    新闻分类(chinaNews)  683M            2              140000+                   60000+                LR            15000     0.9565125193703613
-    新闻分类(chinaNews) 1.98G            6              160000+                   70000+                LR            50000     0.8599223781293982
-
-### SVM分类(二分类)测试记录
-       数据类型        数据大小        分类数        训练文本数/per分类        测试文本数/per分类        分类算法        特征维数         Area under ROC
-    新闻分类(chinaNews)  683M            2              140000+                   60000+               SVM            15000        0.9649445556688644
-    新闻分类(chinaNews)  587M            2              140000+                   60000+               SVM            15000        0.9421810171886563
 
 
 **说明**

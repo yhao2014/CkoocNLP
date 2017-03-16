@@ -35,31 +35,28 @@ WebMagic由以下四个模块组成：<br>
 
 ---
 #ckooc-ml
-本模块主要是基于spark等的机器学习算法实现。<br>
+本模块主要是基于spark的机器学习算法应用实践。<br>
 
-目前以实现的功能有：
+目前实现了以下案例：
 >
-* 数据预处理
-* 数据向量化
-* 基于spark的LDA
-* 基于spark的LR分类
+* 数据预处理与分词过滤
+* 基于LR的新闻分类
 
 
 ## 数据预处理
-[数据预处理](https://github.com/yhao2014/CkoocNLP/blob/master/ckooc-ml/src/main/scala/nlp/preprocess/nlp.PreProcessUtils.scala)主要对算法需要用到的数据进行前期的清洗等操作，其中分词等使用到了[Ansj](https://github.com/ansjsun/ansj_seg)和[HanLP](https://github.com/hankcs/HanLP)相关的代码。
+[数据预处理](https://github.com/yhao2014/CkoocNLP/blob/master/ckooc-ml/src/main/scala/nlp/preprocess/nlp.PreProcessUtils.scala)主要对算法需要用到的数据进行前期的清洗等操作，其中分词等使用到了[HanLP](https://github.com/hankcs/HanLP)相关的代码。
 
-**由于分词使用到的词典和模型较大，因此未上传到github上，请从网盘下载：**<br>
-链接：[http://pan.baidu.com/s/1qYpeaza](http://pan.baidu.com/s/1qYpeaza) 密码：kox1 大小：638MB<br>
-*下载完后解压到ckooc-ml目录下即可*
+**由于分词使用到的词典和模型较大，因此未上传到github上，请直接从[HanLP发布页](https://github.com/hankcs/HanLP/releases)下载对应版本的data包，版本可在pom.xml文件查看**<br>
+*下载完后解压到ckooc-ml/dictionaries目录下即可*
 
 主要有以下功能：
 >
 * 繁简转换
 * 全半角转换
-* 去除无意义词
 * 分词
 * 去除停用词
-* 去除低频词
+* 按词长度过滤
+* 按词数量过滤行
 
 ### 输入数据格式
 数据预处理的输入数据为[中国新闻网](http://www.chinanews.com/)上抓取的数据,分为6个类别`体育`,`军事`,`娱乐`,`文化`,`社会`和`经济`. 分为训练文本和测试文本.

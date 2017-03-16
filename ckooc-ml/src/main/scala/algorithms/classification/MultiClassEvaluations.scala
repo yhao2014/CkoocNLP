@@ -1,4 +1,4 @@
-package ml.classification
+package algorithms.classification
 
 import org.apache.spark.mllib.evaluation.MulticlassMetrics
 import org.apache.spark.rdd.RDD
@@ -8,7 +8,7 @@ import org.apache.spark.rdd.RDD
   *
   * Created by yhao on 2017/3/9.
   */
-object Evaluations extends Serializable {
+object MultiClassEvaluations extends Serializable {
 
   /**
     * 多分类结果评估

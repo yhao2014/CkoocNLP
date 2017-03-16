@@ -1,15 +1,16 @@
-package nlp.segment
+package algorithms.nlp.segment
+
 
 import com.hankcs.hanlp.seg.Segment
 import com.hankcs.hanlp.seg.common.Term
 import com.hankcs.hanlp.tokenizer.{IndexTokenizer, NLPTokenizer, SpeedTokenizer, StandardTokenizer}
+import config.{HasInputCol, HasOutputCol}
 import org.apache.spark.ml.Transformer
 import org.apache.spark.ml.param.{BooleanParam, IntParam, Param, ParamMap}
 import org.apache.spark.ml.util.{DefaultParamsReadable, DefaultParamsWritable, Identifiable}
 import org.apache.spark.sql.functions.{col, udf}
 import org.apache.spark.sql.types._
 import org.apache.spark.sql.{DataFrame, Dataset}
-import param.{HasInputCol, HasOutputCol}
 import util.MySchemaUtils
 
 import scala.collection.JavaConversions._
@@ -83,6 +84,18 @@ class Segmenter(val uid: String) extends Transformer with HasInputCol with HasOu
 
 
   /**
+    * 是否按词性过滤，如果过滤，将只保留名词、动词、形容词和副词
+    * @group param
+    */
+  val natureFilter: BooleanParam = new BooleanParam(this, "natureFilter", "is filter by nature ? " +
+    "If filter, we will remove the nature started with /'m'/'b'/'c'/'e'/'o'/'p'/'q'/'u'/'y'/'z'/'r'/'w', " +
+    "just remain noun/verb/adjective/adverb")
+
+  /** @group setParam */
+  def isNatureFilter(value: Boolean): this.type = set(natureFilter, value)
+
+
+  /**
     * 最小词长度, 大于等于1, 默认为2以去除长度过短的词
     * @group param
     */
@@ -152,6 +165,8 @@ class Segmenter(val uid: String) extends Transformer with HasInputCol with HasOu
           System.exit(1)
       }
 
+      val natureRemoveSet = Set('m','b','c','e','o','p','q','u','y','z','r','w')
+
       val termSeq = terms.flatMap { term =>
         val word = term.word.trim
         val nature = term.nature
@@ -159,6 +174,7 @@ class Segmenter(val uid: String) extends Transformer with HasInputCol with HasOu
         if ($(delNum) && word.matches(numExpr)) None      //去除数字
         else if ($(delEn) && word.matches(enExpr)) None   //去除英文
         else if (word.length < getMinTermLen) None            //去除过短的词
+        else if (natureRemoveSet.contains(nature.firstChar())) None   //按词性过滤
         else if ($(addNature)) Some(word + "/" + nature)
         else Some(word)
       }

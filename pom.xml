@@ -7,7 +7,7 @@
     <groupId>com.ickooc</groupId>
     <artifactId>CkoocNLP</artifactId>
     <packaging>pom</packaging>
-    <version>1.0-SNAPSHOT</version>
+    <version>0.0.1</version>
     <modules>
         <module>ckooc-ml</module>
         <module>ckooc-spider</module>
@@ -15,7 +15,14 @@
 
     <name>NLP-parent</name>
     <url></url>
-    <description>ickooc nlp platform</description>
+    <description>ickooc 机器学习与自然语言处理项目</description>
+
+    <licenses>
+        <license>
+            <name>Apache License Version 2.0</name>
+            <url>https://www.apache.org/licenses/LICENSE-2.0.html</url>
+        </license>
+    </licenses>
 
     <organization>
         <name></name>
@@ -24,22 +31,29 @@
 
     <developers>
         <developer>
-            <id>yhao2014</id>
+            <name>yhao</name>
             <email>yhao2014@sina.com</email>
+            <url>http://blog.csdn.net/yhao2014</url>
         </developer>
     </developers>
 
     <properties>
+        <java.version>1.8</java.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <vendor>ickooc</vendor>
-        <java.version>1.8</java.version>
 
         <guava.version>19.0</guava.version>
         <commons-lang3.version>3.4</commons-lang3.version>
         <logging.version>1.2</logging.version>
         <slf4j.version>1.7.21</slf4j.version>
+        <log4j.version>1.2.17</log4j.version>
         <junit.version>4.12</junit.version>
+
+        <maven-compiler-plugin.version>3.3</maven-compiler-plugin.version>
+        <maven-jar-plugin.version>3.0.2</maven-jar-plugin.version>
+        <maven-resources-plugin.version>3.0.1</maven-resources-plugin.version>
+        <maven-source-plugin.version>3.0.1</maven-source-plugin.version>
     </properties>
 
     <dependencies>
@@ -74,6 +88,12 @@
         </dependency>
 
         <dependency>
+            <groupId>log4j</groupId>
+            <artifactId>log4j</artifactId>
+            <version>${log4j.version}</version>
+        </dependency>
+
+        <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
             <version>${junit.version}</version>
@@ -83,53 +103,61 @@
 
     <build>
         <plugins>
+            <!-- 编译插件, 设定JDK版本 -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.3</version>
+                <version>${maven-compiler-plugin.version}</version>
                 <configuration>
+                    <encoding>${project.build.sourceEncoding}</encoding>
                     <source>${java.version}</source>
                     <target>${java.version}</target>
-                    <encoding>UTF-8</encoding>
-                    <maxmem>1024m</maxmem>
-                    <fork>true</fork>
+                    <showDeprecation>true</showDeprecation>
+                    <showWarnings>true</showWarnings>
+                    <debug>true</debug>
                 </configuration>
             </plugin>
+            <!-- 打包插件，排除语料库和语料库工具以及日志配置文件 -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
-                <version>3.0.2</version>
+                <version>${maven-jar-plugin.version}</version>
                 <configuration>
                     <excludes>
-                        <exclude>*.xml</exclude>
-                        <exclude>*.txt</exclude>
-                        <exclude>*.properties</exclude>
-                        <exclude>conf/*.*</exclude>
+                        <exclude>**/*.properties</exclude>
                     </excludes>
-                    <archive>
-                        <manifestEntries>
-                            <Specification-Vendor>${vendor}</Specification-Vendor>
-                            <Implementation-Vendor>${vendor}</Implementation-Vendor>
-                            <Implementation-Title>${project.artifactId}</Implementation-Title>
-                            <Implementation-Version>${project.version}</Implementation-Version>
-                            <url>${project.url}</url>
-                        </manifestEntries>
-                    </archive>
                 </configuration>
             </plugin>
+            <!-- resource插件, 设定编码 -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-resources-plugin</artifactId>
+                <version>${maven-resources-plugin.version}</version>
+                <configuration>
+                    <encoding>${project.build.sourceEncoding}</encoding>
+                </configuration>
+            </plugin>
+            <!-- source插件,打包源码 -->
+            <plugin>
                 <artifactId>maven-source-plugin</artifactId>
-                <version>3.0.1</version>
+                <version>${maven-source-plugin.version}</version>
                 <executions>
                     <execution>
                         <id>attach-sources</id>
-                        <phase>package</phase>
                         <goals>
-                            <goal>jar-no-fork</goal>
+                            <goal>jar</goal>
                         </goals>
                     </execution>
                 </executions>
+            </plugin>
+            <!-- failsafe插件，跳过测试-->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-failsafe-plugin</artifactId>
+                <version>2.19</version>
+                <configuration>
+                    <skipTests>true</skipTests>
+                </configuration>
             </plugin>
         </plugins>
     </build>

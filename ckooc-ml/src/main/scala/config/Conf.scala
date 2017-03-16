@@ -1,4 +1,4 @@
-package param
+package config
 
 import java.io.{File, FileInputStream, InputStreamReader}
 import java.util.Properties

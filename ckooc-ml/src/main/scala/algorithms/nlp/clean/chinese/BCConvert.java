@@ -1,4 +1,4 @@
-package nlp.clean.chinese;
+package algorithms.nlp.clean.chinese;
 
 import org.apache.commons.lang3.StringUtils;
 

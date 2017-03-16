@@ -1,4 +1,4 @@
-package param
+package config
 
 import org.apache.spark.ml.param._
 

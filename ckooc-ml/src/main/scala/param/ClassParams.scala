@@ -1,5 +1,7 @@
 package param
 
+import config.Conf
+
 import scala.collection.mutable
 
 /**

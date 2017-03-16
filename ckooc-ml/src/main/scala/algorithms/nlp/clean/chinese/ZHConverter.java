@@ -1,4 +1,4 @@
-package nlp.clean.chinese;
+package algorithms.nlp.clean.chinese;
 
 import java.io.*;
 import java.util.*;

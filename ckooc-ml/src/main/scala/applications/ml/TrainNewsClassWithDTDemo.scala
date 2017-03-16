@@ -1,79 +1,57 @@
-package ml.classification
+package applications.ml
 
-import nlp.clean.Cleaner
-import nlp.segment.Segmenter
+import algorithms.nlp.Preprocessor
+import algorithms.nlp.clean.Cleaner
+import algorithms.nlp.segment.Segmenter
 import org.apache.log4j.{Level, Logger}
 import org.apache.spark.ml.Pipeline
-import org.apache.spark.ml.classification.LogisticRegression
-import org.apache.spark.ml.feature.{CountVectorizer, IndexToString, StringIndexer}
+import org.apache.spark.ml.classification.DecisionTreeClassifier
+import org.apache.spark.ml.feature._
 import org.apache.spark.sql.{DataFrame, SparkSession}
+import param.PreprocessParams
 
 /**
-  * Created by yhao on 2017/3/14.
+  * Created by yhao on 2017/3/15.
   */
-object TrainNewsMultiClassWithLR extends Serializable {
+object TrainNewsClassWithDTDemo {
   def main(args: Array[String]): Unit = {
     Logger.getLogger("org").setLevel(Level.WARN)
 
     val spark = SparkSession
       .builder
       .master("local[2]")
-      .appName("train news multi class with LR")
+      .appName("train news multi class with DT")
       .getOrCreate()
 
     val filePath = "ckooc-ml/data/classnews/train"
-    val modelPath = "ckooc-ml/models/news-multi-class-model"
+    val modelPath = "ckooc-ml/models/news-class-DT-model"
 
     val data = clean(filePath, spark)
+    val preprocessor = new Preprocessor
+    val pipeline = preprocessor.preprocess(data)
 
-    val cleaner = new Cleaner()
-      .setFanJan("f2j")
-      .setQuanBan("q2b")
-      .setMinLineLen(15)
-      .setInputCol("content")
-      .setOutputCol("cleand")
+    val dtClassifier = new DecisionTreeClassifier()
+      .setMinInfoGain(0.0)
+      .setMaxDepth(30)
+      .setLabelCol("indexedLabel")
+      .setFeaturesCol("features")
 
-    val indexer = new StringIndexer()
-      .setInputCol("label")
-      .setOutputCol("indexedLabel")
-      .fit(data)
-
-    val segmenter = new Segmenter()
-      .isAddNature(false)
-      .isDelEn(true)
-      .isDelNum(true)
-      .setMinTermLen(2)
-      .setMinTermNum(10)
-      .setSegType("StandardSegment")
-      .setInputCol(cleaner.getOutputCol)
-      .setOutputCol("segmented")
-
-    val vectorizer = new CountVectorizer()
-      .setMinTF(3)
-      .setVocabSize(15000)
-      .setInputCol(segmenter.getOutputCol)
-      .setOutputCol("features")
-
-    val logisticRegression = new LogisticRegression()
-      .setTol(1E-6)
-      .setMaxIter(100)
-      .setRegParam(0.2)
-      .setElasticNetParam(0.05)
-      .setLabelCol(indexer.getOutputCol)
-      .setFeaturesCol(vectorizer.getOutputCol)
-
+    val indexModel = pipeline.getStages(1).asInstanceOf[StringIndexerModel]
+    //索引标签化
     val labelConverter = new IndexToString()
-      .setInputCol(logisticRegression.getPredictionCol)
+      .setLabels(indexModel.labels)
+      .setInputCol(dtClassifier.getPredictionCol)
       .setOutputCol("predictedLabel")
-      .setLabels(indexer.labels)
 
-    val stages = Array(cleaner, indexer, segmenter, vectorizer, logisticRegression, labelConverter)
-    val pipeline = new Pipeline().setStages(stages)
+    val stages = pipeline.getStages ++ Array(dtClassifier, labelConverter)
+    pipeline.setStages(stages)
+
     val model = pipeline.fit(data)
     model.write.overwrite().save(modelPath)
 
     spark.stop()
   }
+
 
   /**
     * 清洗步骤, 可根据具体数据结构和业务场景的不同进行重写. 注意: 输出必须要有标签字段"label"

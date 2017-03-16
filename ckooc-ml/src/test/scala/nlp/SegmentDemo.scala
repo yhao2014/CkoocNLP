@@ -1,7 +1,7 @@
 package nlp
 
+import algorithms.nlp.segment.Segmenter
 import com.hankcs.hanlp.utility.Predefine
-import nlp.segment.Segmenter
 import org.apache.log4j.{Level, Logger}
 import org.apache.spark.sql.SparkSession
 

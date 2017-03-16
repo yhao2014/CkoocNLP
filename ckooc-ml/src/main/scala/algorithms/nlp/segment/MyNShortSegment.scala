@@ -1,4 +1,4 @@
-package nlp.segment
+package algorithms.nlp.segment
 
 import com.hankcs.hanlp.seg.NShort.NShortSegment
 

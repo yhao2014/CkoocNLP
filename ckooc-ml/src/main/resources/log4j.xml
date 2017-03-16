@@ -28,6 +28,6 @@
 	<root>
 		<level value="info" />
 		<appender-ref ref="CONSOLE" />
-		<appender-ref ref="async_file" />
+		<!--<appender-ref ref="async_file" />-->
 	</root>
 </log4j:configuration>

@@ -1,6 +1,6 @@
 package nlp
 
-import nlp.clean.Cleaner
+import algorithms.nlp.clean.Cleaner
 import org.apache.log4j.{Level, Logger}
 import org.apache.spark.sql.SparkSession
 
@@ -21,7 +21,7 @@ object CleanDemo extends Serializable {
     val sentenceData = spark.createDataFrame(text).toDF("id", "sentence")
 
     val cleaner = new Cleaner()
-      .setFanJan("f2j")
+      .setFanJian("f2j")
       .setQuanBan("q2b")
       .setInputCol("sentence")
       .setOutputCol("cleaned")

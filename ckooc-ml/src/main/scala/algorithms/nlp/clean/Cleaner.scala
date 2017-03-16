@@ -1,14 +1,14 @@
-package nlp.clean
+package algorithms.nlp.clean
 
+import algorithms.nlp.clean.chinese.BCConvert
 import com.hankcs.hanlp.HanLP
-import nlp.clean.chinese.{BCConvert, ZHConverter}
+import config.{HasInputCol, HasOutputCol}
 import org.apache.spark.ml.Transformer
-import org.apache.spark.ml.param.{BooleanParam, IntParam, Param, ParamMap}
-import org.apache.spark.ml.util.{DefaultParamsReadable, DefaultParamsWritable, Identifiable, SchemaUtils}
+import org.apache.spark.ml.param.{IntParam, Param, ParamMap}
+import org.apache.spark.ml.util.{DefaultParamsReadable, DefaultParamsWritable, Identifiable}
 import org.apache.spark.sql.functions.{col, udf}
-import org.apache.spark.sql.{DataFrame, Dataset, Row}
-import org.apache.spark.sql.types.{DataType, StringType, StructType}
-import param.{HasInputCol, HasOutputCol}
+import org.apache.spark.sql.types.{StringType, StructType}
+import org.apache.spark.sql.{DataFrame, Dataset}
 import util.MySchemaUtils
 
 
@@ -33,14 +33,14 @@ class Cleaner(val uid: String) extends Transformer with HasInputCol with HasOutp
   val fanjan: Param[String] = new Param[String](this, "fanjan", "words from fan to jan or from jan to fan")
 
   /** @group setParam */
-  def setFanJan(value: String): this.type = {
-    val fanjanSet = Set("f2j", "j2f")
-    require(fanjanSet.contains(value), "繁简参数错误！")
+  def setFanJian(value: String): this.type = {
+    val fanjianSet = Set("f2j", "j2f")
+    require(fanjianSet.contains(value), "繁简参数错误！")
     set(fanjan, value)
   }
 
   /** @group getParam */
-  def getFanJan: String = $(fanjan)
+  def getFanJian: String = $(fanjan)
 
 
   /**
@@ -85,7 +85,7 @@ class Cleaner(val uid: String) extends Transformer with HasInputCol with HasOutp
 
     val cleanFunc = udf {line: String =>
       var cleaned = ""
-      getFanJan match {
+      getFanJian match {
         case "f2j" => cleaned = HanLP.convertToSimplifiedChinese(line)
         case "j2f" => cleaned = HanLP.convertToTraditionalChinese(line)
         case _ => cleaned = line

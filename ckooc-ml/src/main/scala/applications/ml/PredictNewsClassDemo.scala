@@ -18,9 +18,11 @@ object PredictNewsClassDemo extends Serializable {
       .appName("predict news multi class demo")
       .getOrCreate()
 
+    val args = Array("LR")
+    val modelType = args(0)
+
     val filePath = "ckooc-ml/data/classnews/predict"
-//    val modelPath = "ckooc-ml/models/news-class-LR-model"
-    val modelPath = "ckooc-ml/models/news-class-DT-model"
+    val modelPath = "ckooc-ml/models/news-class-" + modelType + "-model"   //加载模型
 
     val data = clean(filePath, spark)
 

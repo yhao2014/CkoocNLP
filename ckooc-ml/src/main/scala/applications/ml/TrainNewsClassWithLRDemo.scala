@@ -5,6 +5,7 @@ import org.apache.log4j.{Level, Logger}
 import org.apache.spark.ml.classification.LogisticRegression
 import org.apache.spark.ml.feature._
 import org.apache.spark.sql.{DataFrame, SparkSession}
+import param.ClassParams
 
 /**
   * Created by yhao on 2017/3/14.
@@ -27,11 +28,12 @@ object TrainNewsClassWithLRDemo extends Serializable {
     val pipeline = preprocessor.preprocess(data)
 
     //LR模型训练
+    val params = new ClassParams
     val logisticRegression = new LogisticRegression()
-      .setTol(1E-6)
-      .setMaxIter(100)
-      .setRegParam(0.2)
-      .setElasticNetParam(0.05)
+      .setTol(params.converTol)
+      .setMaxIter(params.maxIteration)
+      .setRegParam(params.regParam)
+      .setElasticNetParam(params.elasticNetParam)
       .setLabelCol("indexedLabel")
       .setFeaturesCol("features")
 

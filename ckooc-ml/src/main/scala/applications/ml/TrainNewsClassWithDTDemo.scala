@@ -1,14 +1,11 @@
 package applications.ml
 
 import algorithms.nlp.Preprocessor
-import algorithms.nlp.clean.Cleaner
-import algorithms.nlp.segment.Segmenter
 import org.apache.log4j.{Level, Logger}
-import org.apache.spark.ml.Pipeline
 import org.apache.spark.ml.classification.DecisionTreeClassifier
 import org.apache.spark.ml.feature._
 import org.apache.spark.sql.{DataFrame, SparkSession}
-import param.PreprocessParams
+import param.ClassParams
 
 /**
   * Created by yhao on 2017/3/15.
@@ -30,9 +27,11 @@ object TrainNewsClassWithDTDemo {
     val preprocessor = new Preprocessor
     val pipeline = preprocessor.preprocess(data)
 
+    // DT模型训练
+    val params = new ClassParams
     val dtClassifier = new DecisionTreeClassifier()
-      .setMinInfoGain(0.0)
-      .setMaxDepth(30)
+      .setMinInfoGain(params.minInfoGain)
+      .setMaxDepth(params.maxDepth)    //目前Spark只支持最大30层深度
       .setLabelCol("indexedLabel")
       .setFeaturesCol("features")
 

@@ -4,10 +4,7 @@ import us.codecraft.webmagic.ResultItems;
 import us.codecraft.webmagic.Task;
 import us.codecraft.webmagic.pipeline.Pipeline;
 
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStreamWriter;
-import java.io.PrintWriter;
+import java.io.*;
 import java.util.Map;
 import java.util.Objects;
 
@@ -26,25 +23,18 @@ public class BasePipeline implements Pipeline {
         this.path = path;
     }
 
-    Long count = 0L;
-
     @Override
     public void process(ResultItems resultItems, Task task) {
         String reg = "\u00ef";
 
-        if (count % 100000 == 0) {
-            count += 1;
-        }
-        String path_new = path.substring(0, path.lastIndexOf(".")) + "_" + count + path.substring(path.lastIndexOf(".") + 1, path.length());
-
         try {
-            PrintWriter printWriter = new PrintWriter(new OutputStreamWriter(new FileOutputStream(path_new, true),"UTF-8"));
+            BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(path, true),"UTF-8"));
             for (Map.Entry<String, Object> entry : resultItems.getAll().entrySet()) {
                 if (entry.getValue() instanceof Iterable) {
                     if (Objects.equals(entry.getKey(), "content")) {
                         Iterable value = (Iterable) entry.getValue();
                         for (Object o : value) {
-                            printWriter.print(o);
+                            bw.write(o.toString());
                         }
                     }else {
                         Iterable value = (Iterable) entry.getValue();
@@ -52,16 +42,20 @@ public class BasePipeline implements Pipeline {
                         for (Object o : value) {
                             categories += o + "|";
                         }
-                        printWriter.print(categories.substring(0, categories.length() - 1));
+                        bw.write(categories.substring(0, categories.length() - 1));
                     }
                 } else {
-                    printWriter.print(entry.getValue());
+                    if (entry.getValue() != null) {
+                        bw.write(entry.getValue().toString());
+                    } else {
+                        bw.write("");
+                    }
                 }
 
-                printWriter.print(reg);
+                bw.write(reg);
             }
-            printWriter.println();
-            printWriter.close();
+            bw.write("\n");
+            bw.close();
         } catch (IOException e) {
             e.printStackTrace();
         }

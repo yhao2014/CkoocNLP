@@ -14,17 +14,24 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
+ * 豆瓣电影爬虫程序(按年份)
+ * URL: https://movie.douban.com/tag/[year]?start=0&type=T
+ * 中括号部分由自己指定。
+ *
+ * 爬取字段：标题、发行年份、导演、编剧、主演、类型、上映日期、时长、发行国家或地区、语言、别名、得分、得分细节、简介、相关推荐、
+ * 短评、问题、影评、标签、推荐豆列、想看/看过
+ *
  * Created by Administrator on 2016/7/20.
  */
 public class DoubanMovieProcessor implements PageProcessor {
     private static final String UA = "Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/47.0.2526.80 Safari/537.36 Core/1.47.516.400 QQBrowser/9.4.8142.400";
     private Site site = Site.me()
             .setRetryTimes(5)
-            .setSleepTime(300)
+            .setSleepTime(1000)
             .setCycleRetryTimes(6)
-            .setUserAgent(UA)
-            .setHttpProxyPool(getProxyIP("ckooc-spider/lib/dic/proxyIP"))
-            .setProxyReuseInterval(3000);
+            .setUserAgent(UA);
+//            .setHttpProxyPool(getProxyIP("ckooc-spider/lib/dic/proxyIP"))
+//            .setProxyReuseInterval(3000);
 
 
     private static final String URL_LIST = "https://movie\\.douban\\.com/tag/\\d+\\?start=\\d+&type=T";
@@ -196,11 +203,11 @@ public class DoubanMovieProcessor implements PageProcessor {
     }
 
     public static void main(String[] args) throws Exception {
-        String year = "2015";
+        String year = "2016";
         int page = 1;
         String url = "https://movie.douban.com/tag/" + year + "?start=" + (page - 1) * 20 + "&type=T";
 
-        String outPath = "G:/douban/2015.txt";      //保存路径
+        String outPath = "G:/douban/" + year + ".txt";      //保存路径
 
         BasePipeline pipeline = new BasePipeline();
         pipeline.setPath(outPath);
@@ -208,7 +215,7 @@ public class DoubanMovieProcessor implements PageProcessor {
         Spider.create(new DoubanMovieProcessor())
                 .addUrl(url)
                 .addPipeline(pipeline)
-                .thread(3)
+                .thread(1)
                 .run();
     }
 }

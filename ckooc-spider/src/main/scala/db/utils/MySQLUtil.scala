@@ -49,7 +49,7 @@ class MySQLUtils(
 
   def getPasswd: String = this.password
 
-  var conn: Connection = null
+  var conn: Connection = _
 
 
   def init(): Connection ={
@@ -59,7 +59,7 @@ class MySQLUtils(
   }
 
 
-  def insert(conn: Connection, table: String, fields: Array[String], values: Array[String]) = {
+  def insert(conn: Connection, table: String, fields: Array[String], values: Array[String]): Unit = {
     if (fields.length != values.length) {
       println("字段和数值个数不匹配！")
       sys.exit(1)

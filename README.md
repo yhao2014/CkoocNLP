@@ -29,7 +29,7 @@ WebMagic由以下四个模块组成：<br>
 
 同时实现了将结果写入本地文件的PipLine：
 >
-* [BasePipline](https://github.com/yhao2014/CkoocNLP/blob/master/ckooc-spider/src/main/java/webmagic/piplines/BasePipline.java)
+* [BasePipline](https://github.com/yhao2014/CkoocNLP/blob/master/ckooc-spider/src/main/java/webmagic/pipelines/BasePipeline.java)
 
 如有需要的同学可以参考给出的代码自行实现特定网站的爬取和结果存储.
 
@@ -93,14 +93,14 @@ WebMagic由以下四个模块组成：<br>
 ### 1. 基于LR的新闻分类
 基于LR的新闻分类采用了spark ML包提供的LogisticRegression方法，经过预处理步骤后进行6个类别的新闻分类.
 >
-* 训练代码: [TrainNewsClassWithLRDemo](https://github.com/yhao2014/CkoocNLP/blob/master/ckooc-ml/src/main/scala/applications/ml/TrainNewsClassWithLRDemo.scala)
-* 预测代码: [PredictNewsClassDemo](https://github.com/yhao2014/CkoocNLP/blob/master/ckooc-ml/src/main/scala/applications/ml/PredictNewsClassDemo.scala)
+* 训练代码: [TrainNewsClassWithLRDemo](https://github.com/yhao2014/CkoocNLP/blob/master/ckooc-ml/src/main/scala/applications/mining/TrainNewsClassWithLRDemo.scala)
+* 预测代码: [PredictNewsClassDemo](https://github.com/yhao2014/CkoocNLP/blob/master/ckooc-ml/src/main/scala/applications/mining/PredictNewsClassDemo.scala)
 
 ### 2. 基于DT的新闻分类
 基于LR的新闻分类采用了spark ML包提供的DecisionTreeClassifier方法，经过预处理步骤后进行6个类别的新闻分类.
 >
-* 训练代码: [TrainNewsClassWithDTDemo](https://github.com/yhao2014/CkoocNLP/blob/master/ckooc-ml/src/main/scala/applications/ml/TrainNewsClassWithDTDemo.scala)
-* 预测代码: [PredictNewsClassDemo](https://github.com/yhao2014/CkoocNLP/blob/master/ckooc-ml/src/main/scala/applications/ml/PredictNewsClassDemo.scala)
+* 训练代码: [TrainNewsClassWithDTDemo](https://github.com/yhao2014/CkoocNLP/blob/master/ckooc-ml/src/main/scala/applications/mining/TrainNewsClassWithDTDemo.scala)
+* 预测代码: [PredictNewsClassDemo](https://github.com/yhao2014/CkoocNLP/blob/master/ckooc-ml/src/main/scala/applications/mining/PredictNewsClassDemo.scala)
 
 
 

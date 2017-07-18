@@ -62,7 +62,6 @@ public class ZHConverter implements Serializable {
                 charMap.load(reader);
             } catch (FileNotFoundException ignored) {
             } catch (IOException e) {
-                // TODO Auto-generated catch block
                 e.printStackTrace();
             } finally {
                 try {

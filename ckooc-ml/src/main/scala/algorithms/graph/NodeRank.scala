@@ -1,26 +1,27 @@
 package algorithms.graph
 
 import algorithms.graph.common.{Edge, Node}
-import com.alibaba.fastjson.{JSONObject, JSON, JSONArray}
 
 import scala.collection.{Set, mutable}
-import scala.io.Source
 import scala.util.control.Breaks._
 
 /**
+  * NodeRank算法
+  * 功能：(无向图/有向图)关系图节点重要度计算
+  * 说明：本算法以PageRank算法为原型，以节点权重代替PageRank中页面外链数进行迭代更新
+  * 更新公式：score(curr) = (1 - d) + sum(d * score(child) / (weight(child) * 10)), for child in children
+  *
   * Created by Administrator on 2017/4/13.
   */
 class NodeRank(val nodeList: List[Node],
                val edgeList: List[Edge],
                val isDirected: Boolean = false) extends Serializable {
 
-  private val nodeMap = new mutable.HashMap[String, Node]()
-  //节点
-  private final val MAX_ITR = 200
-  //最大迭代次数
-  private final val d = 0.85
-  //阻尼系数，一般设为0.85
-  private final val MIN_DIFF = 1e-3 //迭代停止的最小误差
+  private val nodeMap = new mutable.HashMap[String, Node]()     //节点名与节点映射关系
+
+  private final val MAX_ITR = 200     //最大迭代次数
+  private final val d = 0.85          //阻尼系数，一般设为0.85
+  private final val MIN_DIFF = 1e-3   //迭代停止的最小误差
 
   def run(): List[(String, Double)] = {
     this.init()
@@ -39,8 +40,8 @@ class NodeRank(val nodeList: List[Node],
         for (child <- children if !node.equals(child) && nodeMap(child).getChildren.nonEmpty) {
           val weight = nodeMap(child).getWeight * 10
           var nodeScore: Double = newScores(node)
-          if (scores.get(child).nonEmpty) nodeScore += 1.0 * d / weight * scores(child)
-          else nodeScore += 1.0 * d / weight * 0
+          if (scores.get(child).nonEmpty) nodeScore += 1.0 * d / weight * scores(child)   //迭代更新公式
+
           newScores.put(node, nodeScore)
         }
 

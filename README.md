@@ -54,18 +54,30 @@ WebMagic由以下四个模块组成：<br>
 
 输入文件位置：
 * 训练文本: ckooc-ml/data/chinanews/train/
-* 测试文本: ckooc-ml/data/chinanews/test/
+* 测试文本: ckooc-ml/data/chinanews/predict/
 
 数据格式：<br>
 每行一条新闻数据，保留10个字段：`类别ID` `中文类别名` `标题` `日期` `时间` `记者` `编辑` `关键词` `摘要` `正文`. 不同字段之间使用分割符`ï`(unicode编码为`\u00EF`)
 
-##算法
+
+## 算法
+
+### 1. 图论
+图论相关的算法目前实现了3个：
+>
+* [Dijkstra](https://github.com/yhao2014/CkoocNLP/blob/master/ckooc-ml/src/main/scala/algorithms/graph/Dijkstra.scala): (无向图/有向图)单源最短路径查找
+* [Tarjan](https://github.com/yhao2014/CkoocNLP/blob/master/ckooc-ml/src/main/scala/algorithms/graph/Tarjan.scala): 无向图割点(结构洞)查找，目前只支持单联通图割点查找
+* [NodeRank](https://github.com/yhao2014/CkoocNLP/blob/master/ckooc-ml/src/main/scala/algorithms/graph/NodeRank.scala): (无向图/有向图)关系图节点重要度计算，基于PageRank算法
+
+
+
+##方法
 
 ### 1. 数据预处理
 数据预处理主要分成了两步：
 >
-* [数据清洗](https://github.com/yhao2014/CkoocNLP/blob/master/ckooc-ml/src/main/scala/algorithms/nlp/clean/Cleaner.scala)
-* [分词过滤](https://github.com/yhao2014/CkoocNLP/blob/master/ckooc-ml/src/main/scala/algorithms/nlp/segment/Segmenter.scala)
+* [数据清洗](https://github.com/yhao2014/CkoocNLP/blob/master/ckooc-ml/src/main/scala/functions/clean/Cleaner.scala)
+* [分词过滤](https://github.com/yhao2014/CkoocNLP/blob/master/ckooc-ml/src/main/scala/functions/segment/Segmenter.scala)
 
 *配置参数见[preprocess.properties](https://github.com/yhao2014/CkoocNLP/blob/master/ckooc-ml/src/main/resources/preprocess.properties)*
 

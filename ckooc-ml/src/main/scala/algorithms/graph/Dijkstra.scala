@@ -34,12 +34,12 @@ class Dijkstra(
 
   /**
     * 算法主逻辑
-    * @param current  基准节点
+    * @param curr  基准节点
     * @return List[(最短路径, 路径长度)]
     */
-  def run(current: String): List[(List[String], Double)] = {
+  def run(curr: String): List[(List[String], Double)] = {
 
-    this.init(current: String)    //初始化
+    this.init(curr: String)    //初始化
 
     val nodeSet: Set[String] = path.keySet
     var count = nodeSet.size

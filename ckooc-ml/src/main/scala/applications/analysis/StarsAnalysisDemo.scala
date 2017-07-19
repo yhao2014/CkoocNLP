@@ -70,7 +70,11 @@ object StarsAnalysisDemo {
     // 统计2016出现在新闻中最多的明星
     val stars2016 = segRDD.filter(_._1 == 2016)
       .flatMap { case (year: Int, termStr: Seq[String]) =>
-        val person = termStr.map(term => (term.split("/")(0), term.split("/")(1))).filter(_._2.equals("nr")).map(term => (term._1, 1L))
+        val person = termStr
+          .map(term => (term.split("/")(0), term.split("/")(1)))
+          .filter(_._2.equalsIgnoreCase("nr"))
+          .map(term => (term._1, 1L))
+
         person
       }
       .reduceByKey(_ + _)
